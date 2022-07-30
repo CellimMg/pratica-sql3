@@ -1,7 +1,3 @@
-
-
-
-
 CREATE TABLE "customers"(
     "id" SERIAL PRIMARY KEY,
     "fullName" TEXT NOT NULL,
@@ -13,9 +9,20 @@ CREATE TABLE "customers"(
 CREATE TYPE "phoneType" AS ENUM('landline', 'mobile');
 CREATE TABLE "customerPhones"(
     "id" SERIAL PRIMARY KEY,
-    "customerId" INTEGER NOT NULL REFERENCES "customers"("id"),
+    "customerId" INTEGER UNIQUE NOT NULL REFERENCES "customers"("id"),
     "number" VARCHAR(11) NOT NULL,
-    "type" phoneType NOT NULL
+    "type" "phoneType" NOT NULL
+);
+
+CREATE TABLE "states"(
+    "id" SERIAL PRIMARY KEY,
+    "name" TEXT
+);
+
+CREATE TABLE "cities"(
+    "id" SERIAL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "stateId" INTEGER NOT NULL REFERENCES "states"("id")
 );
 
 CREATE TABLE "customerAddresses"(
@@ -26,17 +33,6 @@ CREATE TABLE "customerAddresses"(
     "complement" TEXT,
     "postalCode" VARCHAR(8) NOT NULL,
     "cityId" INTEGER NOT NULL REFERENCES "cities"("id")
-);
-
-CREATE TABLE "cities"(
-    "id" SERIAL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "stateId" INTEGER NOT NULL REFERENCES "states"("id")
-);
-
-CREATE TABLE "states"(
-    "id" SERIAL PRIMARY KEY,
-    "name" TEXT
 );
 
 CREATE TABLE "bankAccount"(
@@ -50,13 +46,13 @@ CREATE TABLE "bankAccount"(
 
 CREATE TYPE "transactionType" AS ENUM('deposit', 'withdraw');
 CREATE TABLE "transactions"(
-    id SERIAL PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     "bankAccountId" INTEGER NOT NULL REFERENCES "bankAccount"("id"),
-    amount INTEGER NOT NULL,
-    type transactionType NOT NULL,
-    time TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
-    description TEXT,
-    cancelled BOOLEAN NOT NULL
+    "amount" INTEGER NOT NULL,
+    "type" "transactionType" NOT NULL,
+    "time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+    "description" TEXT,
+    "cancelled" BOOLEAN NOT NULL
 );
 
 CREATE TABLE "creditCards"(
@@ -70,13 +66,3 @@ CREATE TABLE "creditCards"(
     "password" VARCHAR(4) NOT NULL,
     "limit" INTEGER NOT NULL DEFAULT 0
 );
-
-
-
-
-
-
-
-
-
-
